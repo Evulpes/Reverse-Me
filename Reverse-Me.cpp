@@ -10,32 +10,32 @@ class AssemblyCode
 public:
 	byte codeCave[85] =
 	{
-		0x49, 0xbf, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r15, 0x0			-- Mov storage address to R15
-		0x41, 0xc6, 0x07, 0x00,											//mov [r15], 0x0		-- Set the busy byte to 0x00
+		0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r15, 0x0			-- Mov storage address to R15	//mov r10, 0x0
+		0x41, 0xc6, 0x02, 0x00,											//mov [r15], 0x0		-- Set the busy byte to 0x00	//mov [r10], 0x0
 		#pragma region Predeterminded Assembly
-		0x4C, 0x89, 0x44, 0x24, 0x12,									//mov [rsp+0x12], r8	
-		0x48, 0x89, 0x54, 0x24, 0x0A,									//mov [rsp+0xa], rdx
+		0x90, 0x90, 0x90, 0x90, 0x90,//mov [rsp+18], r8	-- NOP PADDING
+		0x48, 0x89, 0x54, 0x24, 0x10,									//mov [rsp+10], rdx
 		#pragma endregion
-		0x44, 0x8a, 0x32,												//mov r14b, [rdx]		-- Mov the lower part of RDX, which stores the packet index, into r14b
-		0x45, 0x88, 0x77, 0x1,											//mov [r15+0x1], r14b	-- Mov r14b to the second byte of the allocated storage
-		0x44, 0x8a, 0x72, 0x01,											//mov r14b, [rdx+0x2]	-- Mov the second byte of RDX, the character, into r14b
-		0x45, 0x88, 0x77, 0x02,											//mov r15+0x2, r14b		-- Mov r14b into the second byte of reserved memory			
+		0x44, 0x8a, 0x1a,												//mov r14b, [rdx]		-- Mov the lower part of RDX, which stores the packet index, into r14b		//mov r11b, [rdx]
+		0x45, 0x88, 0x5A, 0x1,											//mov [r15+1], r14b		-- Mov r14b to the second byte of the allocated storage						//mov [r10+1], r11b
+		0x44, 0x8a, 0x5a, 0x01,											//mov r14b, [rdx+1] (was +0x2)	-- Mov the second byte of RDX, the character, into r14b				//mov r11b, [rdx+1]
+		0x45, 0x88, 0x5a, 0x02,											//mov [r15+2], r14b		-- Mov r14b into the second byte of reserved memory							//mov [r10+2], r11b
 
-		0x41, 0xc6, 0x07, 0x01,											//mov [r15], 0x01		-- Signal the busy byte as work complete
-		0x41, 0x80, 0x3f, 0x00,											//cmp [r15], 0x00		-- Wait for software to finish reading, byte will be updated to 0x00
+		0x41, 0xc6, 0x02, 0x01,											//mov [r15], 0x01		-- Signal the busy byte as work complete									//mov [r10], 0x1
+		0x41, 0x80, 0x3a, 0x00,											//cmp [r15], 0x00		-- Wait for software to finish reading, byte will be updated to 0x00		//cmp [r10], 0x0
 		0x75, 0xfa,														//jne 0xfffffffffffffffc-- While software is busy, loop
 
 
 		#pragma region Predeterminded Assembly
-		0x48, 0x89, 0x4C, 0x24, 0x08,									//mov [rsp+0x8], rcx
+		0x48, 0x89, 0x4C, 0x24, 0x08,									//mov [rsp+8], rcx
 		0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+0x8]
-		0x48, 0x8B, 0x4C, 0x24, 0x0A,									//mov rcx, [rsp+0xa]
+		0x48, 0x8B, 0x4C, 0x24, 0x10,									//mov rcx, [rsp+0xa]
 		0x48, 0x89, 0x08,												//mov [rax], rcx
-		0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+0x8]
+		0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+8]
 		#pragma endregion
 
-		0x49, 0xbf, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r15, 0x0			-- Mov the exit address to r15
-		0x41, 0xff, 0xe7,												//jmp r15				-- Jmp to the exit address
+		0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r15, 0x0			-- Mov the exit address to r15		//mov r10, 0x0
+		0x41, 0xff, 0xe2,												//jmp r15				-- Jmp to the exit address			//jmp r10
 	};
 	byte call[23] =
 	{
@@ -141,13 +141,41 @@ int main()
 
 	nativeMethods.NtResumeProcess(processInformation.hProcess);
 
-	//while (true) 
-	//{
-	//	ReadProcessMemory(processInformation.)
-	//}
+	byte busyByte[3] = {};
+	byte byteOne[1] = { 0 };
+	byte socketMessage[14] = {};
+	int counter = 0;
+
+	while (true) 
+	{
+		ReadProcessMemory(processInformation.hProcess, (LPVOID)busyCheckAddr, busyByte, 0x3, &bytes);
+
+		if (busyByte[0] == 1)
+		{
+			socketMessage[busyByte[1]-1] = busyByte[2];
+			counter++;
+
+			
+			WriteProcessMemory(processInformation.hProcess, (LPVOID)busyCheckAddr, (LPCVOID)byteOne, 0x1, &bytes);
+
+
+			if (counter == 14)
+			{
+				break;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < 14; i++)
+	{
+		printf("%c", (char)socketMessage[i]);
+	}
+	printf("\n");
+
 	TerminateProcess(processInformation.hProcess, 0);
 	CloseHandle(processInformation.hThread);
 	CloseHandle(processInformation.hProcess);
+	system("pause");
 }
 
 
