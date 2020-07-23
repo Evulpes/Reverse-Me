@@ -8,6 +8,9 @@
 const int MESSAGE_LENGTH = 14;
 const int CODECAVE_OFFSET = 0x2905;
 const int CODECAVE_STORAGE_SIZE = 0x3;
+
+//Add ?ts=4 to the end of the URL in GitHub for this .cpp file.
+
 class AssemblyCode
 {
 	public:
