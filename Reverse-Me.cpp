@@ -17,15 +17,15 @@ class AssemblyCode
 		byte codeCave[85] =
 		{
 			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov codeCaveStorageAddr address to R10	
-			0x41, 0xc6, 0x02, 0x00,											//mov [r10], 0x0			-- Set the first byte (signalByte) to 0x00	
+			0x41, 0xc6, 0x02, 0x00,											//mov [r10], 0x0			-- Set the first byte (signalByte) to 0x0	
 			#pragma region Predeterminded Assembly
 			0x90, 0x90, 0x90, 0x90, 0x90,									//NOP, NOP, NOP, NOP		-- NOP padding for spacing purposes 
 			0x48, 0x89, 0x54, 0x24, 0x10,									//mov [rsp+10], rdx
 			#pragma endregion
-			0x44, 0x8a, 0x1a,												//mov r11b, [rdx]			-- Mov the lower part of RDX, which stores the winsock send packet index, into r11b		
-			0x45, 0x88, 0x5A, 0x1,											//mov [r10+1], r11b			-- Mov r11b to the second byte of the codeCaveStorage						
-			0x44, 0x8a, 0x5a, 0x01,											//mov r11b, [rdx+1]			-- Mov the second byte of RDX, the character, into r11b				
-			0x45, 0x88, 0x5a, 0x02,											//mov [r10+2], r11b			-- Mov r11b into the second byte of codeCaveStorage						
+			0x44, 0x8a, 0x1a,												//mov r11b, [rdx]			-- Mov the lower part of RDX, which stores the winsock send packet index, into R11B	
+			0x45, 0x88, 0x5A, 0x1,											//mov [r10+1], r11b			-- Mov R11B to the second byte of the codeCaveStorage						
+			0x44, 0x8a, 0x5a, 0x01,											//mov r11b, [rdx+1]			-- Mov the second byte of RDX, the character, into R11B				
+			0x45, 0x88, 0x5a, 0x02,											//mov [r10+2], r11b			-- Mov R11B into the second byte of codeCaveStorage						
 
 			0x41, 0xc6, 0x02, 0x01,											//mov [r10], 0x1			-- Signal the busy byte									
 			0x41, 0x80, 0x3a, 0x00,											//cmp [r10], 0x0			-- Wait for software to finish reading the content. Byte will be updated to 0x0 when complete.		
@@ -37,7 +37,7 @@ class AssemblyCode
 			0x48, 0x89, 0x08,												//mov [rax], rcx
 			0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+8]
 			#pragma endregion
-			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov the return JMP address (jmpFromAddr+1) to r10		
+			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov the return JMP address (jmpFromAddr+1) to R10		
 			0x41, 0xff, 0xe2,												//jmp r10					-- Jmp to the return JMP address			
 		};
 		byte call[23] =
