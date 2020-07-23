@@ -10,53 +10,53 @@ const int CODECAVE_OFFSET = 0x2905;
 const int CODECAVE_STORAGE_SIZE = 0x3;
 class AssemblyCode
 {
-public:
-	byte codeCave[85] =
-	{
-		0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov codeCaveStorageAddr address to R10	
-		0x41, 0xc6, 0x02, 0x00,											//mov [r10], 0x0			-- Set the first byte (signalByte) to 0x00	
-		#pragma region Predeterminded Assembly
-		0x90, 0x90, 0x90, 0x90, 0x90,									//NOP, NOP, NOP, NOP		-- NOP padding for spacing purposes 
-		0x48, 0x89, 0x54, 0x24, 0x10,									//mov [rsp+10], rdx
-		#pragma endregion
-		0x44, 0x8a, 0x1a,												//mov r11b, [rdx]			-- Mov the lower part of RDX, which stores the winsock send packet index, into r14b		
-		0x45, 0x88, 0x5A, 0x1,											//mov [r10+1], r11b			-- Mov r14b to the second byte of the codeCaveStorage						
-		0x44, 0x8a, 0x5a, 0x01,											//mov r11b, [rdx+1]			-- Mov the second byte of RDX, the character, into r14b				
-		0x45, 0x88, 0x5a, 0x02,											//mov [r10+2], r11b			-- Mov r14b into the second byte of codeCaveStorage						
+	public:
+		byte codeCave[85] =
+		{
+			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov codeCaveStorageAddr address to R10	
+			0x41, 0xc6, 0x02, 0x00,											//mov [r10], 0x0			-- Set the first byte (signalByte) to 0x00	
+			#pragma region Predeterminded Assembly
+			0x90, 0x90, 0x90, 0x90, 0x90,									//NOP, NOP, NOP, NOP		-- NOP padding for spacing purposes 
+			0x48, 0x89, 0x54, 0x24, 0x10,									//mov [rsp+10], rdx
+			#pragma endregion
+			0x44, 0x8a, 0x1a,												//mov r11b, [rdx]			-- Mov the lower part of RDX, which stores the winsock send packet index, into r14b		
+			0x45, 0x88, 0x5A, 0x1,											//mov [r10+1], r11b			-- Mov r14b to the second byte of the codeCaveStorage						
+			0x44, 0x8a, 0x5a, 0x01,											//mov r11b, [rdx+1]			-- Mov the second byte of RDX, the character, into r14b				
+			0x45, 0x88, 0x5a, 0x02,											//mov [r10+2], r11b			-- Mov r14b into the second byte of codeCaveStorage						
 
-		0x41, 0xc6, 0x02, 0x01,											//mov [r10], 0x1			-- Signal the busy byte									
-		0x41, 0x80, 0x3a, 0x00,											//cmp [r10], 0x0			-- Wait for software to finish reading the content. Byte will be updated to 0x0 when complete.		
-		0x75, 0xfa,														//jne 0xfffffffffffffffc	-- While byte is signaled, loop.
-		#pragma region Predeterminded Assembly
-		0x48, 0x89, 0x4C, 0x24, 0x08,									//mov [rsp+8], rcx
-		0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+0x8]
-		0x48, 0x8B, 0x4C, 0x24, 0x10,									//mov rcx, [rsp+0xa]
-		0x48, 0x89, 0x08,												//mov [rax], rcx
-		0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+8]
-		#pragma endregion
-		0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov the return JMP address (jmpFromAddr+1) to r10		
-		0x41, 0xff, 0xe2,												//jmp r10					-- Jmp to the return JMP address			
-	};
-	byte call[23] =
-	{
-		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov rax, 0x0 				-- Move codecave address to rax
-		0xff, 0xe0,														//jmp rax
-		0x90, 0x90, 0x90,0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90	//nop padding 				-- Overwrite with NOPS to codecave required replacements
-	};
+			0x41, 0xc6, 0x02, 0x01,											//mov [r10], 0x1			-- Signal the busy byte									
+			0x41, 0x80, 0x3a, 0x00,											//cmp [r10], 0x0			-- Wait for software to finish reading the content. Byte will be updated to 0x0 when complete.		
+			0x75, 0xfa,														//jne 0xfffffffffffffffc	-- While byte is signaled, loop.
+			#pragma region Predeterminded Assembly
+			0x48, 0x89, 0x4C, 0x24, 0x08,									//mov [rsp+8], rcx
+			0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+0x8]
+			0x48, 0x8B, 0x4C, 0x24, 0x10,									//mov rcx, [rsp+0xa]
+			0x48, 0x89, 0x08,												//mov [rax], rcx
+			0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+8]
+			#pragma endregion
+			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Mov the return JMP address (jmpFromAddr+1) to r10		
+			0x41, 0xff, 0xe2,												//jmp r10					-- Jmp to the return JMP address			
+		};
+		byte call[23] =
+		{
+			0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov rax, 0x0 				-- Move codecave address to rax
+			0xff, 0xe0,														//jmp rax
+			0x90, 0x90, 0x90,0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90	//nop padding 				-- Overwrite with NOPS to codecave required replacements
+		};
 };
 class UndocumentedInternals
 {
 	typedef LONG(NTAPI* _NtSuspendProcess)(IN HANDLE hProcess);
 	typedef LONG(NTAPI* _NtResumeProcess)(IN HANDLE hProcess);
 
-public:
-	_NtSuspendProcess NtSuspendProcess;
-	_NtResumeProcess NtResumeProcess;
-	UndocumentedInternals()
-	{
-		NtSuspendProcess = (_NtSuspendProcess)GetProcAddress(GetModuleHandle(L"ntdll"), "NtSuspendProcess");
-		NtResumeProcess = (_NtResumeProcess)GetProcAddress(GetModuleHandle(L"ntdll"), "NtResumeProcess");
-	}
+	public:
+		_NtSuspendProcess NtSuspendProcess;
+		_NtResumeProcess NtResumeProcess;
+		UndocumentedInternals()
+		{
+			NtSuspendProcess = (_NtSuspendProcess)GetProcAddress(GetModuleHandle(L"ntdll"), "NtSuspendProcess");
+			NtResumeProcess = (_NtResumeProcess)GetProcAddress(GetModuleHandle(L"ntdll"), "NtResumeProcess");
+		}
 };
 
 
