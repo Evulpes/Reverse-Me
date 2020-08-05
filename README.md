@@ -22,7 +22,9 @@ However, on closer inspection, we find that this exception is thrown just prior 
   <img src="https://i.imgur.com/rXX4kRE.png"/>
 </p> 
 
-Forgetting the VEHs for the moment, it’s safe to assume that if the application is “sending” packets, then it’s using the [winsock send function](https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send) to do so. Although, the application clearly says they’re “magic” packets, so we’ll see. As expected, it turns out you can’t send packets by magic, so the winsock `send` function is indeed imported.
+Forgetting the VEHs for the moment, it’s safe to assume that if the application is “sending” packets, then it’s using the [winsock send function](https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send) to do so (although, the application clearly says they’re “magic” packets, so we’ll see). 
+
+As expected, it turns out you can’t send packets by magic, so the winsock `send` function is indeed imported.
 
 <p align="center">
   <img src="https://i.imgur.com/UZpYLaU.png"/>
