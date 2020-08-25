@@ -45,7 +45,7 @@ Sadly, there are no useful strings in the read-only data segment, apart from the
   <img src="https://i.imgur.com/29qMiWH.png"/>
 </p> 
 
-Going back to the VEHs, we can see that both registered handles are used to copy a few unknown objects into an allocated memory buffer. This appears to be done by using [memcpy](https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/memcpy-wmemcpy?view=vs-2019), using a function as the second parameter, which in turn uses a hardcoded integer as its second parameter. It’s worth noting that these hardcoded values do not exceed 14 at any point. I’ve only included one of the VEHs in the screenshot, as they are basically identical code-wise except for the hardcoded values.
+Going back to the VEHs, we can see that both registered handlers are used to copy a few unknown objects into an allocated memory buffer. This appears to be done by using [memcpy](https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/memcpy-wmemcpy?view=vs-2019), using a function as the second parameter, which in turn uses a hardcoded integer as its second parameter. It’s worth noting that these hardcoded values do not exceed 14 at any point. I’ve only included one of the VEHs in the screenshot, as they are basically identical code-wise except for the hardcoded values.
 
 <p align="center">
   <img src="https://i.imgur.com/Gncmt93.png"/>
