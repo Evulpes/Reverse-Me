@@ -18,15 +18,10 @@ class AssemblyCode
 		{
 			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Move the address of memory we’ve reserved (codeCaveStorageAddr) in our application to R10
 			0x41, 0xc6, 0x02, 0x00,											//mov [r10], 0x0			-- Set the first byte of our memory (codeCaveStorageAddr) to non-signalled
-			#pragma region Predetermined Assembly
-			
-
-			#pragma endregion
 			0x44, 0x8a, 0x1a,												//mov r11b, [rdx]			-- Move the lower part of RDX, which contains the packet index, into R11B	
 			0x45, 0x88, 0x5A, 0x1,											//mov [r10+1], r11b			-- Move R11B to the second byte of our memory					
 			0x44, 0x8a, 0x5a, 0x01,											//mov r11b, [rdx+1]			-- Move the second byte of RDX, which contains the character, into R11B			
 			0x45, 0x88, 0x5a, 0x02,											//mov [r10+2], r11b			-- Move R11B to the third byte of our memory					
-
 			0x41, 0xc6, 0x02, 0x01,											//mov [r10], 0x1			-- Set the first byte of our memory (signalByte) to signalled								
 			0x41, 0x80, 0x3a, 0x00,											//cmp [r10], 0x0			-- Wait for our application to finish reading the memory, at which point it set the byte (signalByte) to non-signalled		
 			0x75, 0xfa,														//jne 0xfffffffffffffffc	-- While the byte is signalled, jump to the previous step
