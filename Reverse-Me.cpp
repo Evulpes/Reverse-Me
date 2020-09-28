@@ -14,13 +14,13 @@ const int CODECAVE_STORAGE_SIZE = 0x3;
 class AssemblyCode
 {
 	public:
-		byte codeCave[85] =
+		byte codeCave[80] =
 		{
 			0x49, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov r10, 0x0				-- Move the address of memory we’ve reserved (codeCaveStorageAddr) in our application to R10
 			0x41, 0xc6, 0x02, 0x00,											//mov [r10], 0x0			-- Set the first byte of our memory (codeCaveStorageAddr) to non-signalled
 			#pragma region Predetermined Assembly
-			0x90, 0x90, 0x90, 0x90, 0x90,									//NOP, NOP, NOP, NOP		-- NOP padding for spacing purposes 
-			0x48, 0x89, 0x54, 0x24, 0x10,									//mov [rsp+10], rdx
+			
+
 			#pragma endregion
 			0x44, 0x8a, 0x1a,												//mov r11b, [rdx]			-- Move the lower part of RDX, which contains the packet index, into R11B	
 			0x45, 0x88, 0x5A, 0x1,											//mov [r10+1], r11b			-- Move R11B to the second byte of our memory					
@@ -31,6 +31,7 @@ class AssemblyCode
 			0x41, 0x80, 0x3a, 0x00,											//cmp [r10], 0x0			-- Wait for our application to finish reading the memory, at which point it set the byte (signalByte) to non-signalled		
 			0x75, 0xfa,														//jne 0xfffffffffffffffc	-- While the byte is signalled, jump to the previous step
 			#pragma region Predetermined Assembly
+			0x48, 0x89, 0x54, 0x24, 0x10,									//mov [rsp+10], rdx
 			0x48, 0x89, 0x4C, 0x24, 0x08,									//mov [rsp+8], rcx
 			0x48, 0x8B, 0x44, 0x24, 0x08,									//mov rax, [rsp+0x8]
 			0x48, 0x8B, 0x4C, 0x24, 0x10,									//mov rcx, [rsp+0xa]
@@ -42,7 +43,7 @@ class AssemblyCode
 		};
 		byte call[23] =
 		{
-			0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov rax, 0x0 				-- Move codecave address to rax
+			0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		//mov rax, 0x0				-- Move codecave address to rax
 			0xff, 0xe0,														//jmp rax
 			0x90, 0x90, 0x90,0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90	//nop padding 				-- Overwrite with NOPS to codecave required replacements
 		};
@@ -117,12 +118,12 @@ int main()
 
 	//Update the codeCave bytecode with the return jmp address
 	byte* jmpFromAddrPtr = (byte*)&jmpFromAddr;
-	for (int i = 74; i < 82; i++)
+	for (int i = 69; i < 77; i++)
 	{
 		assemblyCode.codeCave[i] = *jmpFromAddrPtr;
 		jmpFromAddrPtr++;
 
-		if (i == 74) 
+		if (i == 69) 
 			assemblyCode.codeCave[i] += 0xc;
 	}
 
